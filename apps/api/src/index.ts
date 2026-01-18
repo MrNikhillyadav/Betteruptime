@@ -56,7 +56,7 @@ app.post('/signin', async (req, res) => {
             id : user.id 
         },JWT_SECRET!)
 
-        res.status(200).json({ message: 'Login successful',token });
+        res.status(200).json({ token });
     } 
     catch (error) {
         res.status(500).send({ error: 'Server error' });
