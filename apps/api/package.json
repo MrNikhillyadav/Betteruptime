@@ -5,22 +5,24 @@
   "private": true,
   "scripts": {
     "build": "tsc -b",
-    "start" : "bun ./dist/index.js",
+    "start": "bun ./dist/index.js",
     "dev": "bun run build && bun start"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@repo/store" : "*",
+    "@repo/store": "*",
     "@repo/typescript-config": "*"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
+    "@types/bcryptjs": "^3.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "axios": "^1.13.2",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",

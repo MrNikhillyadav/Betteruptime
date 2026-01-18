@@ -1,5 +1,5 @@
 {
-  "name": "turborepo-starter",
+  "name": "betteruptime",
   "private": true,
   "scripts": {
     "build": "turbo run build",
