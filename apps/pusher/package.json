@@ -1,0 +1,19 @@
+{
+  "name": "pusher",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "start":"bun ./index.ts",
+    "dev":"bun run build && bun run start"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@repo/store": "*",
+    "@repo/typescript-config":"*",
+    "@repo/redisstream": "*"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

@@ -5,12 +5,7 @@ import { JWT_SECRET } from "./config.js";
 export default async function authMiddleware(req:Request,res:Response,next:NextFunction){
 
     try {
-        const authHeader = req.headers.authorization;
-        
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ error: 'No token' });
-        }
-        const token = authHeader.split(' ')[1];
+        const token = req.headers.token;
     
         if(!token) {
     
@@ -20,7 +15,7 @@ export default async function authMiddleware(req:Request,res:Response,next:NextF
             return;
         }
     
-        const decodedPayload =  await jwt.verify(token, JWT_SECRET!) as { id: string };
+        const decodedPayload =  await jwt.verify(token as unknown as string, JWT_SECRET!) as JwtPayload;
 
 
         if(!decodedPayload) {

@@ -31,7 +31,7 @@ app.post('/signup', async (req, res) => {
             return res.status(400).send({ error: 'Error creating user' });
         }
 
-        res.status(201).json({ message: 'User created successfully' });
+        res.status(201).json({ id: user. });
     } catch (error) {
         res.status(400).send({ error: 'Error creating user' });
     }
@@ -91,7 +91,8 @@ app.post("/website",authMiddleware ,async(req:Request,res:Response) => {
         }
 
         res.status(201).json({
-            message : "website added"
+            id : website.id,
+            userId : website.userId
         })
    }
    catch(e){
