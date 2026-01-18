@@ -7,8 +7,8 @@ describe("User should be able to add website", () => {
     let token : string;
     
     beforeAll(async () => {
-        const data = await CreateUser();
-        token = data.jwt;
+        const user = await CreateUser();
+        token = user.jwt;
     })
 
     it("website not added if URL is not present", async() => {
@@ -17,7 +17,7 @@ describe("User should be able to add website", () => {
             
             },{
                 headers : {
-                    Authorization: `Bearer ${token}`
+                      token: token
                 }
             }
         )
@@ -33,12 +33,12 @@ describe("User should be able to add website", () => {
                 url : "https://google.com"
             },{
                 headers : {
-                    Authorization: `Bearer ${token}`
+                    token: token
                 }
             }
         )
             expect(res.status).toBe(201),
-            expect(res.data.message).toBeDefined()  
+            expect(res.data.id).toBeDefined()  
        }catch(e){
             console.log(e)
        }
@@ -54,5 +54,47 @@ describe("User should be able to add website", () => {
        }catch(e){
           console.log(e)
        }
+    })
+})
+
+describe("user can fetch website",() =>{
+    let token1 : string;
+    let token2 : string;
+    let userId1 : string;
+    let userId2 : string;
+
+    beforeAll(async() => {
+        const user1 = await CreateUser();
+        const user2 = await CreateUser();
+        token1 = user1.jwt;
+        userId1 = user1.userId;
+        token2 = user2.jwt;
+        userId2 = user2.userId;
+        
+    })
+
+    it("Is able to fetch a website the user created",async() => {
+        const websiteResponse = await axios.post(`${BACKEND_URL}/website`,
+            { url: "https://google.com"},
+            { headers : {token: token1  }})
+
+        const getWebsiteResponse = await axios.get(`${BACKEND_URL}/status/:${websiteResponse.data.id}`,{
+            headers : { token : token1}
+        })
+
+        expect(getWebsiteResponse.data.id).toBe(websiteResponse.data.id);
+        expect(getWebsiteResponse.data.userId).toBe(userId1)
+    })
+
+    it("Can't access website created by someone eles",async() => {
+        const websiteResponse = await axios.post(`${BACKEND_URL}/website`,
+            { url: "https://google.com"},
+            { headers : {token: token1  }})
+
+        const getWebsiteResponse = await axios.get(`${BACKEND_URL}/status/:${websiteResponse.data.id}`,{
+            headers : { token : token2}
+        })
+
+        expect(false,"Should not be able to access website created by different user")
     })
 })
