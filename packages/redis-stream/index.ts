@@ -3,18 +3,21 @@ import { createClient } from "redis";
 type WebsiteEvent = {url : string, id : string}
 
 const client = await createClient()
-  .on("error", (err) => console.log("Redis Client Error", err))
-  .connect();
+.on("error", (err) => console.log("Redis Client Error", err))
+.connect()
+
+console.log("connected to Redis")
 
 const STREAM_NAME = 'betteruptime:website';
 
-async function xAdd({url, id}:WebsiteEvent){
+export async function xAdd({url, id}:WebsiteEvent){
   await client.xAdd(
     STREAM_NAME, '*', {
       url,
       id
     }
   );
+  
 }
 
 export async function xAddBulk(websites: WebsiteEvent[]) {
@@ -34,22 +37,22 @@ export async function xReadGroup(consumerGroup:string, workerId:string){
     workerId, {
       key: STREAM_NAME,
       id: '>'
-    }, {
-      COUNT: 5
+    },{
+      COUNT : 5
     }
   );
 
-  console.log("res: ", res);
   //@ts-ignore
-  let messages = res?.[0]?.messages;
-
+  let messages = res?.[0]?.messages ?? [];
   return messages;
 }
 
-async function xAck(consumerGroup:string,eventId:string){
+export async function xAck(consumerGroup:string,eventId:string){
   await client.xAck(STREAM_NAME, consumerGroup, eventId)
 }
 
-async function xAckBulk(consumerGroup:string,eventIds:string[]){
-  eventIds.map(eventId => xAck(consumerGroup,eventId));
+export async function xAckBulk(consumerGroup:string,eventIds:string[]){
+  await Promise.all(
+    eventIds.map(eventId => xAck(consumerGroup, eventId))  // Await each, 
+  );
 }

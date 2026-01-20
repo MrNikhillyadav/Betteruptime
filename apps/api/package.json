@@ -1,0 +1,29 @@
+{
+  "name": "api",
+  "module": "./src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "bun ./dist/index.js",
+    "dev": "bun run build && bun run start"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@repo/store": "*",
+    "@repo/typescript-config": "*"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/dotenv": "^8.2.3",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3"
+  }
+}

@@ -31,7 +31,7 @@ app.post('/signup', async (req, res) => {
             return res.status(400).send({ error: 'Error creating user' });
         }
 
-        res.status(201).json({ id: user. });
+        res.status(201).json({ id: user.id });
     } catch (error) {
         res.status(400).send({ error: 'Error creating user' });
     }
@@ -103,14 +103,14 @@ app.post("/website",authMiddleware ,async(req:Request,res:Response) => {
 
 })
 
-app.get("/status/:websiteId",authMiddleware, async(req,res) => {
+app.get("/status/:websiteId",authMiddleware, async(req:Request,res:Response) => {
     const websiteId = req.params.websiteId?.toString();
 
     try{
         const website = await prismaClient.website.findFirst({
             where : {
                 id : websiteId,
-                userId : req.userId
+                userId : req.userId!
             },
             include: {
                 ticks : {

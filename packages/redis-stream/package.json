@@ -1,13 +1,14 @@
 {
-  "name": "@repo/redisstream",
+  "name": "@repo/redis-stream",
   "module": "index.ts",
   "type": "module",
-  "exports" : {
-    "./client": "./index.ts"
+  "exports": {
+    ".": "./index.ts"
   },
+  "private": true,
   "devDependencies": {
     "@types/bun": "latest",
-    "@repo/typescript-config":"*"
+    "@repo/typescript-config": "*"
   },
   "peerDependencies": {
     "typescript": "^5"

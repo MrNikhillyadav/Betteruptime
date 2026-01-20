@@ -78,7 +78,7 @@ describe("user can fetch website",() =>{
             { url: "https://google.com"},
             { headers : {token: token1  }})
 
-        const getWebsiteResponse = await axios.get(`${BACKEND_URL}/status/:${websiteResponse.data.id}`,{
+        const getWebsiteResponse = await axios.get(`${BACKEND_URL}/status/${websiteResponse.data.id}`,{
             headers : { token : token1}
         })
 

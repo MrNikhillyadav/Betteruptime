@@ -1,4 +1,6 @@
-import { xReadGroupBulk, xAckBulk } from "@repo/redisstream";
+import "dotenv/config"; 
+
+import { xReadGroup, xAckBulk } from "@repo/redis-stream";
 import { prismaClient } from "@repo/store";
 import { CONSUMER_GROUP_REGION_ID, WORKER_ID } from "./config.js";
 import axios from "axios";
@@ -9,14 +11,16 @@ async function fetchWebsite(url: string, websiteId: string) {
         await axios.get(url, { timeout: 10000 });
         const endTime = Date.now();
 
-        await prismaClient.websiteTick.create({
+        const createTickResponse = await prismaClient.websiteTick.create({
             data: {
                 responseTimeMs: endTime - startTime,
                 status: "Up",
-                regionId: CONSUMER_GROUP_REGION_ID!,
+                regionId: CONSUMER_GROUP_REGION_ID,
                 websiteId
             }
-        });
+        }); 
+
+        console.log("createTickResponse: ", createTickResponse)
     } 
     catch (error) {
         const endTime = Date.now();
@@ -32,26 +36,36 @@ async function fetchWebsite(url: string, websiteId: string) {
     }
 }
 
-{/* 
-    1. Worker starts → checks REGION_ID, WORKER_ID env vars
-    2. Infinite loop:
-    ├─ xReadGroup(REGION_ID, WORKER_ID) → gets batch of pending messages
-    ├─ For each message {url, id}:
-    │  └─ axios.get(url) → measure time → prisma.website_tick {Up/Down}
-    ├─ Promise.all() → wait for ALL fetches to complete (parallel)
-    ├─ xAckBulk() → acknowledge processed messages
-    └─ Repeat (or backoff if empty/error)      
-*/}
+// {/* 
+//     1. Worker starts → checks REGION_ID, WORKER_ID env vars
+//     2. Infinite loop:
+//     ├─ xReadGroup(REGION_ID, WORKER_ID) → gets batch of pending messages
+//     ├─ For each message {url, id}:
+//     │  └─ axios.get(url) → measure time → prisma.website_tick {Up/Down}
+//     ├─ Promise.all() → wait for ALL fetches to complete (parallel)
+//     ├─ xAckBulk() → acknowledge processed messages
+//     └─ Repeat (or backoff if empty/error)      
+// */}
+
+console.log(CONSUMER_GROUP_REGION_ID)
+console.log(WORKER_ID)
+
+if (!CONSUMER_GROUP_REGION_ID) {
+    throw new Error("Consumer group name not provided");
+}
+
+if (!WORKER_ID) {
+    throw new Error("worker_id not provided");
+}
+
 
 async function main() {
-    if (!CONSUMER_GROUP_REGION_ID || !WORKER_ID) {
-        throw new Error("CONSUMER_GROUP_REGION_ID/Worker_id not provided");
-    }
-
+  
     while (true) {
         try {
-            const response = await xReadGroupBulk(CONSUMER_GROUP_REGION_ID, WORKER_ID);
-            
+            const response = await xReadGroup(CONSUMER_GROUP_REGION_ID, WORKER_ID);
+            console.log("response: ", response)
+
             if (!response || response.length === 0) {
                 await new Promise(resolve => setTimeout(resolve, 1000)); // 1s backoff
                 continue;
@@ -75,3 +89,4 @@ async function main() {
 }
 
 main().catch(console.error);
+    

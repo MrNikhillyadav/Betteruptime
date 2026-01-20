@@ -40,7 +40,6 @@ model WebsiteTick {
   website        Website        @relation(fields: [websiteId], references: [id])
   createdAt      DateTime       @default(now())
 
-  @@index([regionId])
 }
 
 

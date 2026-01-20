@@ -50,7 +50,7 @@ describe("signin endpoints", () => {
                 password : "testpass123"
             })
             expect(res.status).toBe(200);
-            expect(res.data.jwt).toBeDefined();
+            expect(res.data.token).toBeDefined();
         }catch(e){
             console.log(e)
         }

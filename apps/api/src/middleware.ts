@@ -25,7 +25,7 @@ export default async function authMiddleware(req:Request,res:Response,next:NextF
         }
         
 
-        req.userId = decodedPayload.id;
+        req.userId = decodedPayload.id as string;
         next();
         
     }
