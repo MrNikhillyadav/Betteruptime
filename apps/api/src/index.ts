@@ -103,6 +103,41 @@ app.post("/website",authMiddleware ,async(req:Request,res:Response) => {
 
 })
 
+app.get("/website",authMiddleware ,async(req:Request,res:Response) => {
+
+   try{
+        const websites = await prismaClient.website.findMany({
+            where : {
+                userId: req.userId,
+            },
+            include :{
+                ticks : {
+                    orderBy : {
+                        createdAt : "desc",
+                    },
+                    take :10
+                }
+            }
+        })
+
+        if(!websites){
+            res.json({
+                message : "No website found to monitor."
+            })
+            return;
+        }
+
+        res.status(200).json(websites);
+   }
+   catch(e){
+        res.status(500).json({
+            message : "Internal server error"
+        })
+   }
+
+})
+
+
 app.get("/status/:websiteId",authMiddleware, async(req:Request,res:Response) => {
     const websiteId = req.params.websiteId?.toString();
 
