@@ -36,10 +36,9 @@ model WebsiteTick {
   status         WebsiteStatus
   regionId       String
   websiteId      String
-  region         Region         @relation(fields: [regionId], references: [id])
-  website        Website        @relation(fields: [websiteId], references: [id])
+  region         Region         @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  website        Website        @relation(fields: [websiteId], references: [id], onDelete: Cascade)
   createdAt      DateTime       @default(now())
-
 }
 
 

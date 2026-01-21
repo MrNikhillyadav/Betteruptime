@@ -137,6 +137,28 @@ app.get("/website",authMiddleware ,async(req:Request,res:Response) => {
 
 })
 
+app.delete("/website/:id", authMiddleware, async (req: Request, res: Response) => {
+  const websiteId = req.params.id
+  console.log("websiteId: ", websiteId)
+
+  try {
+    const result = await prismaClient.website.delete({
+      where: {
+        //@ts-ignore
+        id: websiteId,
+        userId: req.userId!,   
+      },
+    })
+
+    console.log("result", result)
+
+    res.json({ message: "Deleted" })
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ message: "Failed to delete" })
+  }
+})
+
 
 app.get("/status/:websiteId",authMiddleware, async(req:Request,res:Response) => {
     const websiteId = req.params.websiteId?.toString();
