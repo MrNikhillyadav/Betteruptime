@@ -1,6 +1,6 @@
 import { NextFunction,Request,Response } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { JWT_SECRET } from "./config.js";
+import { JWT_SECRET_KEY } from "./config.js";
 
 export default async function authMiddleware(req:Request,res:Response,next:NextFunction){
 
@@ -15,7 +15,7 @@ export default async function authMiddleware(req:Request,res:Response,next:NextF
             return;
         }
     
-        const decodedPayload =  await jwt.verify(token as unknown as string, JWT_SECRET!) as JwtPayload;
+        const decodedPayload =  await jwt.verify(token as unknown as string, JWT_SECRET_KEY!) as JwtPayload;
 
 
         if(!decodedPayload) {

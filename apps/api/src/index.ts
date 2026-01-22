@@ -2,7 +2,7 @@ import "dotenv/config";
 import express, { Request, Response } from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken"
-import { JWT_SECRET, PORT } from "./config.js";
+import { JWT_SECRET_KEY, PORT } from "./config.js";
 import {prismaClient} from "@repo/store";
 import authMiddleware from "./middleware.js";
 import bcrypt from "bcryptjs";
@@ -54,7 +54,7 @@ app.post('/signin', async (req, res) => {
 
         const token = await jwt.sign({
             id : user.id 
-        },JWT_SECRET!)
+        },JWT_SECRET_KEY!)
 
         res.status(200).json({ token });
     } 
