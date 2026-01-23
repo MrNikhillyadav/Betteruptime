@@ -1,135 +1,177 @@
-# Turborepo starter
+# BetterUptime – Website Monitoring System
 
-This Turborepo starter is maintained by the Turborepo core team.
+A BetterUptime-inspired website monitoring system built to explore **scalable system design**, **async processing**, and **real-world backend architecture**.
 
-## Using this example
+This project focuses on how to monitor a large number of websites efficiently, process checks asynchronously, and serve fast dashboards without overloading the database or backend.
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
-```
+## 🚀 Features
 
-## What's inside?
+- User authentication (email + password)
+- Add and manage website monitors
+- Periodic uptime and response-time checks
+- Region-based monitoring (e.g. India, USA)
+- Async processing using Redis Streams
+- Bulk database writes for efficiency
+- Dashboard showing:
+  - Current status (UP / DOWN)
+  - Latest response time
+  - Last 10 response-time ticks (graph-ready)
 
-This Turborepo includes the following packages/apps:
+---
 
-### Apps and Packages
+## 🧠 High-Level Architecture
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+The system is designed around **decoupling** and **asynchronous processing**.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- API handles user interactions and metadata
+- Poller schedules monitoring work
+- Workers perform network-heavy checks
+- Database writes are batched
+- Frontend consumes already-processed data
 
-### Utilities
+This ensures the system stays responsive even as the number of monitored websites grows.
 
-This Turborepo has some additional tools already setup for you:
+---
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+## 🧱 Tech Stack
 
-### Build
+### Frontend
+- Next.js
 
-To build all apps and packages, run the following command:
+### Backend
+- Bun
+- Express.js
+- Prisma ORM
+- PostgreSQL
 
-```
-cd my-turborepo
+### Async / Background Processing
+- Redis Streams
+- Consumer Groups
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+### Monorepo
+- Turborepo (initialized with Bun)
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+---
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## 👤 User Flow
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+1. User signs up / logs in using email and password  
+2. Backend issues a JWT (currently stored in localStorage)  
+3. User lands on an empty dashboard  
+4. User adds a website URL to monitor  
+5. Backend stores website metadata in Postgres  
+6. Monitoring happens asynchronously via background workers  
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+---
 
-### Develop
+## ⏱️ Monitoring Flow (Backend)
 
-To develop all apps and packages, run the following command:
+1. A **poller (publisher)** runs every 3 minutes
+2. It fetches website records from Postgres in bulk
+3. Websites are pushed into a Redis Stream using `XADD`
+4. Redis Streams distribute work across consumers using consumer groups
+5. Consumers:
+   - Hit the website URL
+   - Measure response time
+   - Determine UP / DOWN status
+   - Push results to an internal queue
+6. Results are **batched and written** to Postgres in a single operation
 
-```
-cd my-turborepo
+---
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+## 👥 Region-Based Consumers
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+- Separate Redis consumer groups per region (e.g. India, USA)
+- Each group can have multiple workers
+- Horizontal scaling is achieved by adding more consumers
+- Load distribution is handled automatically by Redis Streams
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+---
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+## 📊 Frontend Data Flow
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+The frontend never performs heavy computation.
 
-### Remote Caching
+It simply fetches:
+- Current website status
+- Latest response time
+- Last 10 response-time ticks
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+This data is already pre-aggregated in the database, making the UI fast and predictable.
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+---
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+## 🗄️ Database Design (High Level)
 
-```
-cd my-turborepo
+- `users` – authentication and ownership
+- `websites` – website metadata
+- `website_ticks` – response-time history
+- Aggregated fields stored to avoid expensive reads
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+(Exact schema may evolve.)
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+---
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## 🧪 Why Redis Streams?
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+Redis Streams were chosen over pub/sub or simple queues because they provide:
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+- Message persistence
+- Consumer groups
+- Automatic load distribution
+- Message replay
+- Better fault tolerance
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
+This makes them suitable for reliable background processing.
 
-## Useful Links
+---
 
-Learn more about the power of Turborepo:
+## ⚠️ Known Limitations / Improvements
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+This is an evolving project. Some planned improvements:
+
+- Replace DB polling with an event-driven scheduler
+- Add retry logic and dead-letter queues
+- Smarter backoff for flaky websites
+- Rate limiting per domain
+- Move JWT from localStorage to httpOnly cookies
+- Improve time-series storage (downsampling / cold storage)
+- Better multi-region failover strategy
+- Alerting (email / webhook / Slack)
+
+---
+
+## 🛠️ Local Development (WIP)
+
+> Detailed setup instructions will be added.
+
+Planned:
+- Docker setup for Postgres and Redis
+- `.env` example
+- Local worker + poller startup scripts
+
+---
+
+## 📌 Goals of This Project
+
+- Practice real-world system design
+- Explore async and distributed processing
+- Build something scalable, not just functional
+- Learn tradeoffs between different architectural choices
+
+---
+
+## 🤝 Feedback & Contributions
+
+This project is mainly a learning and exploration effort.
+
+If you’ve built similar systems or see better ways to approach parts of this design, I’d love to hear your thoughts.  
+Suggestions, issues, and discussions are welcome.
+
+---
+
+## 📜 License
+
+MIT (or to be decided)
