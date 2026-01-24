@@ -1,27 +1,31 @@
 import {prismaClient} from "@repo/store"
 import {xAddBulk} from "@repo/redis-stream"
 
-const websitesArr = [];
-
-async function main(){
+async function main() {
+  try {
     const websites = await prismaClient.website.findMany({
-       select : {
-            id : true,
-            url : true,
-       }
+      select: { id: true, url: true }
     });
+    
+    console.log("websites length:", websites.length);
 
-    console.log("websites length: ", websites.length);
-
-   await xAddBulk(websites.map(w => ({
-        url : w.url,
-        id : w.id
-   })))
-
+    await xAddBulk(
+      websites.map(w => ({ url: w.url, id: w.id }))
+    );
+  } catch (err) {
+    console.error("Pusher error:", err);
+  }
 }
 
-setInterval(async () => {
-    main()
-}, 3 * 1000 * 60) 
 
-main();
+setTimeout(() => {
+  main();
+  setInterval(main, 3 * 60 * 1000);
+}, 10_000);
+
+
+// setInterval(async () => {
+//     main()
+// }, 3 * 1000 * 60) 
+
+// main();

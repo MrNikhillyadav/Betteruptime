@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: betteruptime-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: betteruptime
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: betteruptime-redis
+    ports:
+      - "6379:6379"
+
+  # 👇 ADD THIS SERVICE HERE
+  migrate:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: betteruptime-migrate
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    working_dir: /usr/src/app/packages/store  ## or like below
+    # command: bunx prisma migrate deploy --schema=packages/store/prisma/schema.prisma
+    command: bunx prisma migrate deploy
+    restart: "no"
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: betteruptime-backend
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/betteruptime
+      REDIS_URL: redis://redis:6379
+
+  consumer:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.consumer
+    container_name: betteruptime-consumer
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+
+  pusher:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.pusher
+    container_name: betteruptime-pusher
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+      args:
+        DATABASE_URL: postgresql://postgres:postgres@postgres:5432/betteruptime
+    container_name: betteruptime-frontend
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:

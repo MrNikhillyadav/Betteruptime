@@ -12,6 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json({ strict: false }));
 
+
 app.get("/", (req, res) => {
   res.status(200).send("OK");
 });
@@ -47,20 +48,26 @@ app.post('/signin', async (req, res) => {
             return res.status(400).send({ error: 'user not found ' });
         }
         const decodedPassword = await bcrypt.compare(password, user.password)
+        console.log("decodedPassword: ", decodedPassword);
 
         if (!decodedPassword) {
             return res.status(400).send({ error: 'Invalid credentials' });
         }
 
+        console.log("JWT_SECRET_KEY:", JWT_SECRET_KEY);
+
         const token = await jwt.sign({
             id : user.id 
-        },JWT_SECRET_KEY!)
+        },JWT_SECRET_KEY ||"JWT_SECRET_KEY")
+
+        console.log("token: ", token);
 
         res.status(200).json({ token });
     } 
-    catch (error) {
+   catch (error) {
+        console.error("Signin error:", error);
         res.status(500).send({ error: 'Server error' });
-    }   
+    }  
 });
 
 app.post("/website",authMiddleware ,async(req:Request,res:Response) => {
@@ -203,6 +210,6 @@ app.get("/status/:websiteId",authMiddleware, async(req:Request,res:Response) => 
      
 })
 
-app.listen(PORT,() => {
+app.listen(PORT || 3001,() => {
     console.log(`API server is running on PORT`, PORT);
 })

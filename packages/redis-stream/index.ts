@@ -2,13 +2,50 @@ import { createClient } from "redis";
 
 type WebsiteEvent = {url : string, id : string}
 
-const client = await createClient()
-.on("error", (err) => console.log("Redis Client Error", err))
-.connect()
+if (!process.env.REDIS_URL) {
+  throw new Error("REDIS_URL is not set");
+}
 
-console.log("connected to Redis")
+const client = createClient({
+  url: process.env.REDIS_URL,
+});
 
-const STREAM_NAME = 'betteruptime:website';
+client.on("error", (err) => {
+  console.error("Redis Client Error", err);
+});
+
+await client.connect();
+
+const STREAM_NAME = "betteruptime:website";
+const DEFAULT_CONSUMER_GROUP = "1";
+
+/**
+ * Ensure stream + consumer group exist.
+ * This must run once on startup.
+ */
+
+async function ensureConsumerGroup() {
+  try {
+    await client.xGroupCreate(
+      STREAM_NAME,
+      DEFAULT_CONSUMER_GROUP,
+      "0",
+      { MKSTREAM: true }
+    );
+    console.log(
+      `Redis consumer group '${DEFAULT_CONSUMER_GROUP}' created`
+    );
+  } catch (err: any) {
+    // BUSYGROUP = group already exists → safe to ignore
+    if (!err?.message?.includes("BUSYGROUP")) {
+      throw err;
+    }
+  }
+}
+
+await ensureConsumerGroup();
+
+/* ---------------- STREAM PRODUCERS ---------------- */
 
 export async function xAdd({url, id}:WebsiteEvent){
   await client.xAdd(
@@ -30,6 +67,8 @@ export async function xAddBulk(websites: WebsiteEvent[]) {
         )
     );
 }
+
+/* ---------------- STREAM CONSUMERS ---------------- */
 
 export async function xReadGroup(consumerGroup:string, workerId:string){
   const res = await client.xReadGroup(

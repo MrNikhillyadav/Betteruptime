@@ -7,7 +7,7 @@ import { useCheckUserLoggedIn } from "../hook/useCheckUserLoggedIn";
 
 export default function SignIn(){
   const isLoggedIn = useCheckUserLoggedIn()
-
+  
   if(isLoggedIn){
     redirect('/dashboard')
   }

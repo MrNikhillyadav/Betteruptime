@@ -11,8 +11,8 @@ COPY ./turbo.json ./turbo.json
 COPY ./apps/consumer ./apps/consumer
 
 RUN bun install
-RUN bun run db:generate
 
-EXPOSE 6379
+RUN cd packages/store && bunx prisma generate
+# RUN bun run db:generate
 
 CMD ["bun", "run", "start:consumer"]

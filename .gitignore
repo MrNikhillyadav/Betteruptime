@@ -1,5 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+#to prevent client generated on windows to be used in docker container (ubuntu)
+packages/store/.prisma
+packages/store/generated
+
+
 # Dependencies
 node_modules
 .pnp

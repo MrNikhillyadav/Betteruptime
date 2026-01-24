@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:15
+    env_file: .env
+
+  redis:
+    image: redis:7
+
+  # 👇 one-time migration job
+  migrate:
+    image: mrnikhillyadav/betteruptime-backend:latest
+    depends_on:
+      - postgres
+    env_file: .env
+    working_dir: /usr/src/app/packages/store
+    command: bunx prisma migrate deploy
+    restart: "no"
+
+  backend:
+    image: mrnikhillyadav/betteruptime-backend:latest
+    env_file: .env
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+
+  consumer:
+    image: mrnikhillyadav/betteruptime-consumer:latest
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+
+  pusher:
+    image: mrnikhillyadav/betteruptime-pusher:latest
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+
+  frontend:
+    image: mrnikhillyadav/betteruptime-frontend:latest
+    ports:
+      - "3000:3000"

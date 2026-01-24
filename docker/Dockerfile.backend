@@ -4,15 +4,19 @@ WORKDIR /usr/src/app
 
 COPY ./packages ./packages
 COPY ./bun.lock ./bun.lock
-
 COPY ./package.json ./package.json
 COPY ./turbo.json ./turbo.json
-
 COPY ./apps/api ./apps/api
 
 RUN bun install
-RUN bun run db:generate
+
+RUN cd packages/store && bunx prisma generate
+# RUN bun run db:generate
 
 EXPOSE 3001
 
 CMD ["bun", "run", "start:api"]
+
+# Move DB-related commands to runtime, not build time.
+# CMD ["sh", "-c", "bun run db:generate && bun run start:api"]
+

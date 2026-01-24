@@ -47,8 +47,8 @@ async function fetchWebsite(url: string, websiteId: string) {
 //     └─ Repeat (or backoff if empty/error)      
 // */}
 
-console.log(CONSUMER_GROUP_REGION_ID)
-console.log(WORKER_ID)
+console.log("CONSUMER_GROUP_REGION_ID: ",CONSUMER_GROUP_REGION_ID)
+console.log("WORKER_ID: ",WORKER_ID)
 
 if (!CONSUMER_GROUP_REGION_ID) {
     throw new Error("Consumer group name not provided");
@@ -64,7 +64,7 @@ async function main() {
     while (true) {
         try {
             const response = await xReadGroup(CONSUMER_GROUP_REGION_ID, WORKER_ID);
-            console.log("response: ", response)
+            console.log("consumerresponse: ", response)
 
             if (!response || response.length === 0) {
                 await new Promise(resolve => setTimeout(resolve, 1000)); // 1s backoff

@@ -19,6 +19,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./docker/Dockerfile.backend
+          file: ./docker/Dockerfile.pusher
           push: true
           tags: mrnikhillyadav/betteruptime-pusher:${{ github.sha }}
+       #Deploy to VM

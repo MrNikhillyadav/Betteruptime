@@ -15,7 +15,7 @@ export default async function authMiddleware(req:Request,res:Response,next:NextF
             return;
         }
     
-        const decodedPayload =  await jwt.verify(token as unknown as string, JWT_SECRET_KEY!) as JwtPayload;
+        const decodedPayload =  await jwt.verify(token as unknown as string, JWT_SECRET_KEY || "JWT_SECRET_KEY") as JwtPayload;
 
 
         if(!decodedPayload) {
