@@ -28,6 +28,9 @@ services:
   consumer:
     image: mrnikhillyadav/betteruptime-consumer:latest
     env_file: .env
+    environment:
+    CONSUMER_GROUP_REGION_ID: region-india
+    WORKER_ID: worker-1
     depends_on:
       - postgres
       - redis

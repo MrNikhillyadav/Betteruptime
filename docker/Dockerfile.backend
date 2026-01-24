@@ -13,6 +13,8 @@ RUN bun install
 RUN cd packages/store && bunx prisma generate
 # RUN bun run db:generate
 
+RUN cd apps/api && bun run build
+
 EXPOSE 3001
 
 CMD ["bun", "run", "start:api"]
