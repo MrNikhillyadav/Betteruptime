@@ -21,5 +21,7 @@ jobs:
           context: .
           file: ./docker/Dockerfile.consumer
           push: true
-          tags: mrnikhillyadav/betteruptime-consumer:${{ github.sha }}
+          tags: |
+            mrnikhillyadav/betteruptime-consumer:latest
+            mrnikhillyadav/betteruptime-consumer:${{ github.sha }}
     #Deploy to VM

@@ -19,7 +19,6 @@ services:
     ports:
       - "6379:6379"
 
-  # 👇 ADD THIS SERVICE HERE
   migrate:
     build:
       context: .

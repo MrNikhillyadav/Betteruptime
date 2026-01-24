@@ -22,5 +22,7 @@ jobs:
           context: .
           file: ./docker/Dockerfile.frontend
           push: true
-          tags: mrnikhillyadav/betteruptime-frontend:${{ github.sha }}
+          tags: |
+            mrnikhillyadav/betteruptime-frontend:latest
+            mrnikhillyadav/betteruptime-frontend:${{ github.sha }}
      #Deploy to VM

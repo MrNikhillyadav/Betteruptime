@@ -22,5 +22,8 @@ jobs:
           file: ./docker/Dockerfile.backend
           build-args: DATABASE_URL=${{ secrets.DATABASE_URL }}
           push: true
-          tags: mrnikhillyadav/betteruptime-backend:${{ github.sha }}
+          tags: |
+            mrnikhillyadav/betteruptime-backend:latest
+            mrnikhillyadav/betteruptime-backend:${{ github.sha }}
+            
       #Deploy to VM

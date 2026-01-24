@@ -2,11 +2,13 @@ services:
   postgres:
     image: postgres:15
     env_file: .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   redis:
     image: redis:7
 
-  # 👇 one-time migration job
+  # one time migration job
   migrate:
     image: mrnikhillyadav/betteruptime-backend:latest
     depends_on:
@@ -43,3 +45,6 @@ services:
     image: mrnikhillyadav/betteruptime-frontend:latest
     ports:
       - "3000:3000"
+
+volumes:
+  pgdata:

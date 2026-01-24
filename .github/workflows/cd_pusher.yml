@@ -21,5 +21,7 @@ jobs:
           context: .
           file: ./docker/Dockerfile.pusher
           push: true
-          tags: mrnikhillyadav/betteruptime-pusher:${{ github.sha }}
+          tags: |
+            mrnikhillyadav/betteruptime-pusher:latest
+            mrnikhillyadav/betteruptime-pusher:${{ github.sha }}
        #Deploy to VM
