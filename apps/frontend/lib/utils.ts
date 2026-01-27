@@ -9,4 +9,5 @@ export function cn(...inputs: ClassValue[]) {
 
 
 
-export const  BACKEND_URL="http://localhost:3001"
+// export const  BACKEND_URL=process.env.BACKEND_URL
+export const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL!
