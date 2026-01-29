@@ -1,6 +1,6 @@
 import axios from "axios";
 import {beforeAll, describe, expect, it} from "bun:test";
-import { BACKEND_URL } from "./config";
+import { NEXT_PUBLIC_API_URL } from "./config";
 import { CreateUser } from "./testUtils";
 
 describe("User should be able to add website", () => {
@@ -13,7 +13,7 @@ describe("User should be able to add website", () => {
 
     it("website not added if URL is not present", async() => {
        try{
-            await axios.post(`${BACKEND_URL}/website`,{
+            await axios.post(`${NEXT_PUBLIC_API_URL}/website`,{
             
             },{
                 headers : {
@@ -29,7 +29,7 @@ describe("User should be able to add website", () => {
     
     it("website added if URL is present with header", async() => {
        try{
-            const res = await axios.post(`${BACKEND_URL}/website`,{
+            const res = await axios.post(`${NEXT_PUBLIC_API_URL}/website`,{
                 url : "https://google.com"
             },{
                 headers : {
@@ -46,7 +46,7 @@ describe("User should be able to add website", () => {
 
     it("website not add if header is missing ", async() => {
        try{
-            const res = await axios.post(`${BACKEND_URL}/website`,{
+            const res = await axios.post(`${NEXT_PUBLIC_API_URL}/website`,{
                 url : "https://google.com"
             }
         )
@@ -74,11 +74,11 @@ describe("user can fetch website",() =>{
     })
 
     it("Is able to fetch a website the user created",async() => {
-        const websiteResponse = await axios.post(`${BACKEND_URL}/website`,
+        const websiteResponse = await axios.post(`${NEXT_PUBLIC_API_URL}/website`,
             { url: "https://google.com"},
             { headers : {token: token1  }})
 
-        const getWebsiteResponse = await axios.get(`${BACKEND_URL}/status/${websiteResponse.data.id}`,{
+        const getWebsiteResponse = await axios.get(`${NEXT_PUBLIC_API_URL}/status/${websiteResponse.data.id}`,{
             headers : { token : token1}
         })
 
@@ -87,11 +87,11 @@ describe("user can fetch website",() =>{
     })
 
     it("Can't access website created by someone eles",async() => {
-        const websiteResponse = await axios.post(`${BACKEND_URL}/website`,
+        const websiteResponse = await axios.post(`${NEXT_PUBLIC_API_URL}/website`,
             { url: "https://google.com"},
             { headers : {token: token1  }})
 
-        const getWebsiteResponse = await axios.get(`${BACKEND_URL}/status/:${websiteResponse.data.id}`,{
+        const getWebsiteResponse = await axios.get(`${NEXT_PUBLIC_API_URL}/status/:${websiteResponse.data.id}`,{
             headers : { token : token2}
         })
 

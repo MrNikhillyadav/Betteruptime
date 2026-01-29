@@ -1,13 +1,13 @@
 import axios from 'axios'
 import {describe, expect, it} from 'bun:test'
-import { BACKEND_URL } from './config'
+import { NEXT_PUBLIC_API_URL } from './config'
 
 export const USER_NAME = Math.random().toString();
 
 describe("Signup endpoints", () => {
     it("User not able to signup if body is incorrect", async() => {
         try{
-            await axios.post(`${BACKEND_URL}/signup`,{
+            await axios.post(`${NEXT_PUBLIC_API_URL}/signup`,{
                 username : USER_NAME, 
                 password : "testpass123"
             })
@@ -18,7 +18,7 @@ describe("Signup endpoints", () => {
     })
     it("User is able to signup if body is correct", async() => {
         try{
-            const res = await axios.post(`${BACKEND_URL}/signup`,{
+            const res = await axios.post(`${NEXT_PUBLIC_API_URL}/signup`,{
                 username : USER_NAME, 
                 password : "testpass123"
             })
@@ -33,7 +33,7 @@ describe("Signup endpoints", () => {
 describe("signin endpoints", () => {
     it("User not able to signin if body is incorrect", async() => {
         try{
-            await axios.post(`${BACKEND_URL}/signin`,{
+            await axios.post(`${NEXT_PUBLIC_API_URL}/signin`,{
                 username : USER_NAME, 
                 password : "testpass123"
             })
@@ -45,7 +45,7 @@ describe("signin endpoints", () => {
 
     it("User is able to signin if body is correct", async() => {
         try{
-            const res = await axios.post(`${BACKEND_URL}/signin`,{
+            const res = await axios.post(`${NEXT_PUBLIC_API_URL}/signin`,{
                 username : USER_NAME, 
                 password : "testpass123"
             })

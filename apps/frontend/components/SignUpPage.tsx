@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Activity, Eye, EyeOff, Loader2 } from "lucide-react"
 import axios from "axios"
-import { BACKEND_URL } from "@/lib/utils"
+import { NEXT_PUBLIC_API_URL } from "@/lib/utils"
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -41,14 +41,14 @@ export default function SignUpPage() {
     setIsLoading(true)
 
     try {
-      const res = await axios.post(`${BACKEND_URL}/signup`,{
+      const res = await axios.post(`${NEXT_PUBLIC_API_URL}/signup`,{
         username: email,
         password
       })
       
-      console.log(res.data.message);
+      console.log("res.data.message:" ,res.data.message);
 
-      router.push("/dashboard")
+      router.push("/signin")
     } catch {
       setError("Something went wrong. Please try again.")
     } finally {

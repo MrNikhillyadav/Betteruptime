@@ -18,13 +18,17 @@
     "check-types": "turbo run check-types",
     "db:migrate:dev": "cd packages/store && prisma migrate dev",
     "db:generate": "cd packages/store && prisma generate && cd ../../",
-    "start:frontend":"cd apps/frontend && bun run start", 
-    "start:api":"cd apps/api && bun run start", 
-    "start:pusher":"cd apps/pusher && bun run start", 
-    "start:consumer":"cd apps/consumer && bun run start" 
+    "start:frontend": "cd apps/frontend && bun run start",
+    "start:api": "cd apps/api && bun run start",
+    "start:pusher": "cd apps/pusher && bun run start",
+    "start:consumer": "cd apps/consumer && bun run start"
   },
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@types/dotenv": "^8.2.3",
+    "dotenv": "^17.2.3"
+  }
 }

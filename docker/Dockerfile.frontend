@@ -14,7 +14,9 @@ RUN bun install
 
 # Required ONLY because frontend imports @repo/store
 RUN cd packages/store && bunx prisma generate
-# RUN bun run db:generate
+
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 # frontend build may need DATABASE_URL only for build-time env
 RUN DATABASE_URL=${DATABASE_URL} bun run build

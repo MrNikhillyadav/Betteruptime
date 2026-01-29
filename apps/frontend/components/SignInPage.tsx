@@ -11,7 +11,7 @@ import { Instrument_Serif } from "next/font/google";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Activity, Eye, EyeOff, Loader2 } from "lucide-react"
 import axios from "axios"
-import { BACKEND_URL } from "@/lib/utils"
+import { NEXT_PUBLIC_API_URL } from "@/lib/utils"
 
 const instrumentSerif = Instrument_Serif({
   weight: ["400"],
@@ -41,7 +41,7 @@ export default function SignInPage() {
 
     try {
       const res = await axios.post<SignInResponse, { data: SignInResponse }, { username: string; password: string }>(
-        `${BACKEND_URL}/signin`,
+        `${NEXT_PUBLIC_API_URL}/signin`,
         {
           username, 
           password
