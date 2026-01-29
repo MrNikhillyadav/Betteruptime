@@ -26,7 +26,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Activity, Plus, ExternalLink, Trash2, Loader2 } from "lucide-react"
 import axios from "axios"
-import { BACKEND_URL } from "@/lib/utils"
+import { NEXT_PUBLIC_API_URL } from "@/lib/utils"
 
 const instrumentSerif = Instrument_Serif({
   weight: ["400"],
@@ -73,7 +73,7 @@ export function DashboardPage() {
         return
       }
 
-      const res = await axios.get<ApiWebsite[]>(`${BACKEND_URL}/website`, {
+      const res = await axios.get<ApiWebsite[]>(`${NEXT_PUBLIC_API_URL}/website`, {
         headers: { token }
       })
       console.log("fetched websites: ",res.data)
@@ -142,7 +142,7 @@ export function DashboardPage() {
       const res = await axios.post<{
         id: string
         userId: string
-      }>(`${BACKEND_URL}/website`, { url: urlToAdd }, {
+      }>(`${NEXT_PUBLIC_API_URL}/website`, { url: urlToAdd }, {
         headers: { token }
       })
 
@@ -171,7 +171,7 @@ export function DashboardPage() {
 
     try {
       const token = localStorage.getItem("token")
-      const deleteRes = await axios.delete(`${BACKEND_URL}/website/${websiteId}`, {
+      const deleteRes = await axios.delete(`${NEXT_PUBLIC_API_URL}/website/${websiteId}`, {
         headers: { token }
       })
 

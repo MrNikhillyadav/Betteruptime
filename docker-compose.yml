@@ -75,8 +75,9 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.frontend
-      args:
+      args:  #build args get read at build time, envs gets read at run time. Next.js needs to talk to db during build so needs to pass as Args.
         DATABASE_URL: postgresql://postgres:postgres@postgres:5432/betteruptime
+        NEXT_PUBLIC_API_URL: http://localhost:3001       #Note: backend is container name, not using localhost  
     container_name: betteruptime-frontend
     ports:
       - "3000:3000"

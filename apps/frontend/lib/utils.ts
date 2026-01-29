@@ -5,9 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+if(!process.env.NEXT_PUBLIC_API_URL){
+  console.log("NEXT_PUBLIC_API_URL DOES NOT AVAILABLE")
+}
 
-
-
-
-// export const  BACKEND_URL=process.env.BACKEND_URL
-export const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL!
+export const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL ;

@@ -4,6 +4,10 @@
   "workspaces": {
     "": {
       "name": "BetterUptime_v1",
+      "dependencies": {
+        "@types/dotenv": "^8.2.3",
+        "dotenv": "^17.2.3",
+      },
       "devDependencies": {
         "prettier": "^3.7.4",
         "turbo": "^2.7.4",
