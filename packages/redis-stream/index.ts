@@ -3,17 +3,12 @@ import { createClient } from "redis";
 
 type WebsiteEvent = {url : string, id : string}
 
-// if (!process.env.REDIS_URL) {
-//   throw new Error("REDIS_URL is not set");
-// }
-
 console.log("REDIS_URL: ", process.env.REDIS_URL);
 
 const client = createClient({
   url: process.env.REDIS_URL || "redis://localhost:6379",
 });
 
-// const client = createClient()
 
 client.on("error", (err) => {
   console.error("Redis Client Error", err);

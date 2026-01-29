@@ -45,9 +45,6 @@ services:
     restart: always
     env_file:
       - .env
-    environment:
-      CONSUMER_GROUP_REGION_ID: "1"
-      WORKER_ID: "1"
     depends_on:
       - postgres
       - redis
